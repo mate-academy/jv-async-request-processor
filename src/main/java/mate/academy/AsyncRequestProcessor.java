@@ -24,6 +24,7 @@ public class AsyncRequestProcessor {
         map.put(userId, userData);
         return CompletableFuture.supplyAsync(() -> map.get(userId));
     }
+
     enum Country {
         UKRAINE,
         USA,
