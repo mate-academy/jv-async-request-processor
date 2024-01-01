@@ -16,6 +16,11 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (map.containsKey(userId)) {
             return CompletableFuture.supplyAsync(() -> map.get(userId));
         }
