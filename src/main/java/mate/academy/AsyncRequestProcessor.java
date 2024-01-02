@@ -16,17 +16,24 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        if (map.containsKey(userId)) {
-            return CompletableFuture.supplyAsync(() -> map.get(userId));
-        }
         UserData userData = new UserData(userId, "This user from "
                 + Country.values()[random.nextInt(Country.values().length)]);
-        map.put(userId, userData);
+        if (!map.containsKey(userId)) {
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Happened interruption");
+                }
+                return userData;
+            }).whenComplete((result, throwable) -> {
+                if (throwable == null) {
+                    map.put(userId, result);
+                } else {
+                    throw new RuntimeException("Something was wrong");
+                }
+            });
+        }
         return CompletableFuture.supplyAsync(() -> map.get(userId));
     }
 
