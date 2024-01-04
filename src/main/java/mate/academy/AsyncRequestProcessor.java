@@ -5,18 +5,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import mate.academy.service.UserDataService;
-import mate.academy.service.impl.UserDataServiceMockImpl;
 
 public class AsyncRequestProcessor {
-    private final UserDataService userDataService = new UserDataServiceMockImpl();
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Function<String, UserData> userDataFunction;
     private final Executor executor;
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
-        userDataFunction = userId -> userDataService.getUserById(userId);
+        userDataFunction = userId -> new UserData(userId, "Details for " + userId);
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
@@ -28,8 +25,7 @@ public class AsyncRequestProcessor {
                         }
                         cache.put(userId, userData);
                     });
-        } else {
-            return CompletableFuture.supplyAsync(() -> cache.get(userId));
         }
+        return CompletableFuture.supplyAsync(() -> cache.get(userId));
     }
 }
