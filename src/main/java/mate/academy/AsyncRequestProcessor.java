@@ -9,7 +9,7 @@ import mate.academy.service.UserDataService;
 import mate.academy.service.impl.UserDataServiceMockImpl;
 
 public class AsyncRequestProcessor {
-    UserDataService userDataService = new UserDataServiceMockImpl();
+    private final UserDataService userDataService = new UserDataServiceMockImpl();
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Function<String, UserData> userDataFunction;
     private final Executor executor;

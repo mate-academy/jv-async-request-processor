@@ -21,7 +21,10 @@ public class UserDataServiceMockImpl implements UserDataService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        UserData userData = db.stream().filter(data -> data.userId() == id).findFirst().orElse(null);
+        UserData userData = db.stream()
+                .filter(data -> data.userId() == id)
+                .findFirst()
+                .orElse(null);
         return userData;
     }
 }
