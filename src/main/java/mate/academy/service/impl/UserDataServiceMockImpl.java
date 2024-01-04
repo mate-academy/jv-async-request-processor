@@ -8,10 +8,10 @@ import mate.academy.service.UserDataService;
 
 public class UserDataServiceMockImpl implements UserDataService {
     private final List<UserData> db = new ArrayList(
-            Arrays.asList(new UserData("1", "Details"),
-                    new UserData("2", "Details"),
-                    new UserData("3", "Details"),
-                    new UserData("4", "Details"))
+            Arrays.asList(new UserData("user1", "Details"),
+                    new UserData("user2", "Details"),
+                    new UserData("user3", "Details"),
+                    new UserData("user4", "Details"))
     );
 
     @Override
