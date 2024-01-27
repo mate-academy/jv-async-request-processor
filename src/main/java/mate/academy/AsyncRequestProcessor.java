@@ -13,9 +13,7 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        CompletableFuture<UserData> completableFuture = new CompletableFuture<>();
-
-        completableFuture.completeAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             if (cache.containsKey(userId)) {
                 return cache.get(userId);
             }
@@ -25,15 +23,14 @@ public class AsyncRequestProcessor {
 
             return userData;
         }, executor);
-        return completableFuture;
     }
 
     private UserData getUserDataFromBase(String userId) {
         try {
             Thread.sleep(500);
+            return new UserData(userId, "Details for " + userId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return new UserData(userId, "Details for " + userId);
     }
 }
