@@ -19,10 +19,10 @@ public class AsyncRequestProcessor {
         if (cache.containsKey(userId)) {
             return CompletableFuture.supplyAsync(() -> cache.get(userId));
         }
-        return wrapToCompletableFuture(userId);
+        return process(userId);
     }
 
-    private CompletableFuture<UserData> wrapToCompletableFuture(String userId) {
+    private CompletableFuture<UserData> process(String userId) {
         return CompletableFuture
                 .supplyAsync(() -> getAppliedUserData(userId), executor)
                 .whenComplete((userData, throwable) -> cache.put(userId, userData));
