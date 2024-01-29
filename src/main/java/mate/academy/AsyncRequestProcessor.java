@@ -14,25 +14,26 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (cache.get(userId) != null) {
-                return cache.get(userId);
-            }
+        if (cache.get(userId) != null) {
+            return CompletableFuture.supplyAsync(() -> cache.get(userId));
+        }
 
+        return getUserData(userId);
+    }
+
+    private CompletableFuture<UserData> getUserData(String userId) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
-            UserData userData = new UserData(
+            return new UserData(
                     userId,
                     String.format("Details for user with id: %s", userId)
             );
-
-            cache.put(userId, userData);
-
-            return userData;
-        }, executor);
+        }, executor)
+                .whenComplete((userData, throwable) -> cache.put(userId, userData));
     }
 }
