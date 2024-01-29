@@ -11,14 +11,14 @@ public class AsyncRequestProcessor {
     private static final String USER_DETAILS_MESSAGE = "Some details about user";
     private static final int SLEEP_TIME_MILLIS = 500;
     private final Executor executor;
-    private final Map<String, UserData> appCache = new ConcurrentHashMap<>();
+    private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (appCache.containsKey(userId)) {
+        if (cache.containsKey(userId)) {
             return getUserData(userId);
         }
         return createUserData(userId);
@@ -35,17 +35,10 @@ public class AsyncRequestProcessor {
                             return new UserData(userId, USER_DETAILS_MESSAGE);
                         }
                 )
-                .whenComplete((user, throwable) -> appCache.put(userId, user));
+                .whenComplete((user, throwable) -> cache.put(userId, user));
     }
 
     private CompletableFuture<UserData> getUserData(String userId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(SLEEP_TIME_MILLIS);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(INTERRUPTED_EXCEPTION_MESSAGE, e);
-            }
-            return appCache.get(userId);
-        });
+        return CompletableFuture.supplyAsync(() -> cache.get(userId));
     }
 }
