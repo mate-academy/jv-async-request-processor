@@ -5,9 +5,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
+    public static final int NUM_THREADS = 2;
+
     public static void main(String[] args) {
         // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
@@ -17,7 +19,7 @@ public class Main {
         for (int i = 0; i < userIds.length; i++) {
             String userId = userIds[i];
             futures[i] = asyncRequestProcessor.processRequest(userId)
-                    .thenAccept(userData -> System.out.println("Processed: " + userData));
+                    .thenAccept(userData -> System.out.printf("Processed: %s%n", userData));
         }
 
         // Wait for all futures to complete
