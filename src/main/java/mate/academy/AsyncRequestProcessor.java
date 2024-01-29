@@ -1,9 +1,12 @@
 package mate.academy;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
+    private static final Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Executor executor;
 
     public AsyncRequestProcessor(Executor executor) {
@@ -11,6 +14,26 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return null;
+        if (cache.get(userId) != null) {
+            return CompletableFuture.supplyAsync(() -> cache.get(userId));
+        }
+
+        return getUserData(userId);
+    }
+
+    private CompletableFuture<UserData> getUserData(String userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            return new UserData(
+                    userId,
+                    String.format("Details for user with id: %s", userId)
+            );
+        }, executor)
+                .whenComplete((userData, throwable) -> cache.put(userId, userData));
     }
 }
