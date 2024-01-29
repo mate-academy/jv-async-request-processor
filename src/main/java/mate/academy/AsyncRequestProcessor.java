@@ -39,13 +39,6 @@ public class AsyncRequestProcessor {
     }
 
     private CompletableFuture<UserData> getUserData(String userId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                TimeUnit.SECONDS.sleep(1L);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return cache.get(userId);
-        });
+        return CompletableFuture.supplyAsync(() -> cache.get(userId));
     }
 }
