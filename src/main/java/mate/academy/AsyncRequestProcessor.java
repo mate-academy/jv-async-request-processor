@@ -7,6 +7,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
+    public static final int TIMEOUT_TIME = 500;
+    public static final String USER_DETAILS_TEXT = "Details for ";
     private Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Executor executor;
 
@@ -16,7 +18,7 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         try {
-            TimeUnit.MILLISECONDS.sleep(500);
+            TimeUnit.MILLISECONDS.sleep(TIMEOUT_TIME);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -26,11 +28,17 @@ public class AsyncRequestProcessor {
                     .supplyAsync(() -> cache.get(userId), executor);
         }
 
-        UserData userData = new UserData(userId, "Details for " + userId);
-        cache.put(userId, userData);
+        UserData userData = new UserData(userId, USER_DETAILS_TEXT + userId);
 
         return CompletableFuture
-                .supplyAsync(() -> userData, executor);
+                .supplyAsync(() -> userData, executor)
+                .whenComplete((result, throwable) -> {
+                    if (throwable == null) {
+                        cache.put(userId, result);
+                    } else {
+                        throw new RuntimeException(throwable);
+                    }
+                });
     }
 }
 
