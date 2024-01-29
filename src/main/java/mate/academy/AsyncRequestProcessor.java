@@ -15,7 +15,7 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         if (cache.containsKey(userId)) {
-           return CompletableFuture.supplyAsync(() -> cache.get(userId), executor);
+            return CompletableFuture.supplyAsync(() -> cache.get(userId), executor);
         }
         return CompletableFuture.supplyAsync(() -> {
             try {
