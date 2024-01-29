@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
@@ -16,15 +17,35 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         if (cache.containsKey(userId)) {
-            return CompletableFuture.completedFuture(cache.get(userId));
+            return getUserData(userId);
         }
-        return CompletableFuture.supplyAsync(() -> loadUserData(userId), executor);
+        return loadUserData(userId);
     }
 
-    private UserData loadUserData(String userId) {
-        UserData newUser = new UserData(userId, "Details for " + userId);
-        cache.put(userId, newUser);
+    private CompletableFuture<UserData> loadUserData(String userId) {
+        final String details = String.format("Details for %s", userId);
 
-        return newUser;
+        return CompletableFuture.supplyAsync(
+                        () -> {
+                            try {
+                                TimeUnit.SECONDS.sleep(1L);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return new UserData(userId, details);
+                        }
+                )
+                .whenComplete((user, throwable) -> cache.put(userId, user));
+    }
+
+    private CompletableFuture<UserData> getUserData(String userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            return cache.get(userId);
+        });
     }
 }
