@@ -23,9 +23,9 @@ public class AsyncRequestProcessor {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            UserData userData = new UserData(userId, "Details for " + userId);
-            data.put(userId, userData);
-            return userData;
-        }, executor);
+            return new UserData(userId, "Details for " + userId);
+        }, executor).whenComplete((result, exception) -> {
+            data.put(userId, result);
+        });
     }
 }

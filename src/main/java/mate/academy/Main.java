@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 public class Main {
     public static void main(String[] args) {
         // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
