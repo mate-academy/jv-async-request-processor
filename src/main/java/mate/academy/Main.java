@@ -18,7 +18,6 @@ public class Main {
                     .thenAccept(userData -> System.out.println("Processed: " + userData));
         }
 
-        // Wait for all futures to complete
         CompletableFuture.allOf(futures).join();
         executor.shutdown();
     }
