@@ -17,12 +17,6 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(TIMEOUT_TIME);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
         if (cache.containsKey(userId)) {
             return CompletableFuture
                     .supplyAsync(() -> cache.get(userId), executor);
@@ -31,7 +25,14 @@ public class AsyncRequestProcessor {
         UserData userData = new UserData(userId, USER_DETAILS_TEXT + userId);
 
         return CompletableFuture
-                .supplyAsync(() -> userData, executor)
+                .supplyAsync(() -> {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(TIMEOUT_TIME);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return userData;
+                }, executor)
                 .whenComplete((result, throwable) -> {
                     if (throwable == null) {
                         cache.put(userId, result);
