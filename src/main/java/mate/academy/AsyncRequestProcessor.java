@@ -1,15 +1,12 @@
 package mate.academy;
 
-import static java.util.concurrent.CompletableFuture.delayedExecutor;
-
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
-    private static final int TIME_DELAY = 1;
+    private static final int TIME_DELAY = 1000;
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
@@ -18,37 +15,25 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        CompletableFuture<UserData> cacheLookupFuture = CompletableFuture.supplyAsync(() -> {
-            if (!cache.containsKey(userId)) {
-                return null;
-            }
-            return cache.get(userId);
-        }, delayedExecutor(TIME_DELAY, TimeUnit.SECONDS));
+        UserData cachedUserData = cache.get(userId);
+        if (cachedUserData != null) {
+            return CompletableFuture.completedFuture(cachedUserData);
+        }
 
-        CompletableFuture<UserData> populateCacheFuture =
-                cacheLookupFuture.thenCompose(existingUserData -> {
-                    if (existingUserData != null) {
-                        return CompletableFuture.completedFuture(existingUserData);
-                    } else {
-                        return CompletableFuture.supplyAsync(() -> {
-                            UserData newUser = new UserData(
-                                    userId,
-                                    String.format("Details for user %s", userId)
-                            );
-                            cache.put(userId, newUser);
-                            return newUser;
-                        }, executor);
+        return CompletableFuture.supplyAsync(() -> retrieveUserData(userId), executor)
+                .whenComplete((userData, throwable) -> {
+                    if (userData != null) {
+                        cache.put(userId, userData);
                     }
                 });
+    }
 
-        return populateCacheFuture.whenComplete((userData, throwable) -> {
-            if (throwable != null) {
-                System.err.printf("Error occurred while processing request for user %s: %s",
-                        userId, throwable.getMessage());
-                cache.remove(userId);
-            } else {
-                System.out.printf("Request processed successfully for user %s", userId);
-            }
-        });
+    private UserData retrieveUserData(String userId) {
+        try {
+            Thread.sleep(TIME_DELAY);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new UserData(userId, String.format("Details for user %s", userId));
     }
 }
