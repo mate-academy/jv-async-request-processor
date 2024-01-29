@@ -5,8 +5,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
+    public static final int THREAD_POOL_NUMBER = 7;
+
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(7);
+        ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_NUMBER);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
