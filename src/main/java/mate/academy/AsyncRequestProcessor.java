@@ -24,8 +24,6 @@ public class AsyncRequestProcessor {
                 throw new RuntimeException(e);
             }
             return new UserData(userId, "Details for " + userId);
-        }, executor).whenComplete((result, exception) -> {
-            data.put(userId, result);
-        });
+        }, executor).whenComplete((result, exception) -> data.put(userId, result));
     }
 }
