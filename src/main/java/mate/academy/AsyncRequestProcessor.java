@@ -21,8 +21,9 @@ public class AsyncRequestProcessor {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(200);
-                cache.put(userId, new UserData(userId, USER_DETAILS + userId));
-                return cache.get(userId);
+                UserData userData = new UserData(userId, USER_DETAILS + userId);
+                cache.put(userId, userData);
+                return userData;
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
