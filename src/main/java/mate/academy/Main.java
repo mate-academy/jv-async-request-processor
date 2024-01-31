@@ -6,7 +6,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newCachedThreadPool();
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         String[] userIds = {"user1", "user2", "user3", "user1"};
