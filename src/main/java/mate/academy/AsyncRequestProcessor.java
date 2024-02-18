@@ -15,16 +15,13 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(() -> findUserData(userId), executor);
-    }
-
-    private UserData findUserData(String userId) {
         if (cache.containsKey(userId)) {
-            return cache.get(userId);
+            return CompletableFuture
+                    .supplyAsync(() -> cache.get(userId), executor);
         }
-        UserData userData = findUserDataFromDB(userId);
-        cache.put(userId, userData);
-        return userData;
+        return CompletableFuture
+                .supplyAsync(() -> findUserDataFromDB(userId), executor)
+                .whenComplete((userData, throwable) -> cache.put(userId, userData));
     }
 
     private UserData findUserDataFromDB(String userId) {
