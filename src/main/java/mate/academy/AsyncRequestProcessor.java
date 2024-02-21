@@ -17,24 +17,18 @@ public class AsyncRequestProcessor {
         return CompletableFuture.supplyAsync(() -> cache.get(userId))
                 .thenApply(data -> {
                     if (data == null) {
-                        throw new ValueIsAbsentException();
+                        data = saveUserInfoToCache(userId);
                     }
                     return data;
-                })
-                .exceptionallyAsync(throwable -> handleThrowable(throwable, userId));
-    }
-
-    private static class ValueIsAbsentException extends RuntimeException {
-    }
-
-    private UserData handleThrowable(Throwable throwable, String userId) {
-        if (throwable.getCause().getClass() == ValueIsAbsentException.class) {
-            return saveUserInfoToCache(userId);
-        }
-        return null;
+                });
     }
 
     private UserData saveUserInfoToCache(String userId) {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         UserData userData = new UserData(userId, "Details for " + userId);
         cache.put(userId, userData);
         return userData;
