@@ -19,18 +19,17 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         return CompletableFuture.supplyAsync(
-                () -> getIfPresent(userId), executor);
+                () -> getUserDataIfPresentOrCreate(userId), executor);
     }
 
-    private UserData getIfPresent(String userId) {
+    private UserData getUserDataIfPresentOrCreate(String userId) {
         if (cache.containsKey(userId)) {
             return cache.get(userId);
         }
         try {
             Thread.sleep(random.nextInt(200));
         } catch (InterruptedException e) {
-            throw new RuntimeException(
-                    "Operation failed in theread: " + Thread.currentThread().getName(), e);
+            Thread.currentThread().interrupt();
         }
         UserData user = new UserData(userId, "Details for " + userId);
         cache.put(userId,user);
