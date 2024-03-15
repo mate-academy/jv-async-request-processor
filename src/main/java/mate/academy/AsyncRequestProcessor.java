@@ -16,7 +16,7 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         return CompletableFuture.supplyAsync(() -> cashUserData.get(userId), executor)
-                .thenApply(userData -> {
+                .thenApplyAsync(userData -> {
                     if (userData == null) {
                         userData = mockGetFromDb(userId);
                     }
@@ -26,7 +26,7 @@ public class AsyncRequestProcessor {
 
     private UserData mockGetFromDb(String userId) {
         try {
-            Thread.sleep(1500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
