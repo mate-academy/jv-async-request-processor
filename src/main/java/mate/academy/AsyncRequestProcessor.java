@@ -23,7 +23,7 @@ public class AsyncRequestProcessor {
                         });
     }
 
-    public UserData getUserDataByUserId(String userId) {
+    private UserData getUserDataByUserId(String userId) {
         return new UserData(userId, "Details for %s".formatted(userId));
     }
 }
