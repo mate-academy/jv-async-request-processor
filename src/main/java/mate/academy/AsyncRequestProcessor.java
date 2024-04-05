@@ -8,19 +8,18 @@ import java.util.concurrent.Executor;
 public class AsyncRequestProcessor {
     private static final String SIMULATE_DETAIL_INFO = "Details for ";
     private final Executor executor;
-    private final Map<String, UserData> cache;
+    private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
-        this.cache = new ConcurrentHashMap<>();
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
         if (cache.containsKey(userId)) {
             return CompletableFuture.completedFuture(cache.get(userId));
         }
+        UserData userData = getSimuleteUserData(userId);
         return CompletableFuture.supplyAsync(() -> {
-            UserData userData = getSimuleteUserData(userId);
             cache.put(userId, userData);
             return userData;
         }, executor);
