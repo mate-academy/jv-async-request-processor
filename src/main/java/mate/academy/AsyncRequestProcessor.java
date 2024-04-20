@@ -18,6 +18,10 @@ public class AsyncRequestProcessor {
         if (cache.containsKey(userId)) {
             return CompletableFuture.completedFuture(cache.get(userId));
         }
+        return createNewUserData(userId);
+    }
+
+    private CompletableFuture<UserData> createNewUserData(String userId) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(500);
