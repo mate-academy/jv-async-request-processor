@@ -1,7 +1,5 @@
 package mate.academy;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,7 +7,7 @@ import java.util.concurrent.Executors;
 public class Main {
     public static void main(String[] args) {
         // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = Executors.newFixedThreadPool(4); // Provide implementation that fits your needs
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
