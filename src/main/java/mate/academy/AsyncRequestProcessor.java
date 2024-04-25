@@ -15,7 +15,7 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(()-> fillAndReturnUserData(userId), executor);
+        return CompletableFuture.supplyAsync(() -> fillAndReturnUserData(userId), executor);
     }
 
     private UserData fillAndReturnUserData(String userId) {
@@ -32,6 +32,4 @@ public class AsyncRequestProcessor {
         cache.put(userId, userData);
         return userData;
     }
-
-
 }
