@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
+    private static final int SLEEP_DURATION = 1000;
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
@@ -20,7 +21,7 @@ public class AsyncRequestProcessor {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(SLEEP_DURATION);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
