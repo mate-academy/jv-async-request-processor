@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
-    private static final int SLEEP_DURATION = 1000;
+    private static final int SLEEP_DURATION_MILLISECONDS = 1000;
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
@@ -20,14 +20,19 @@ public class AsyncRequestProcessor {
         }
 
         return CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(SLEEP_DURATION);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            sleep(SLEEP_DURATION_MILLISECONDS);
             UserData userData = new UserData(userId, "Details for " + userId);
             cache.put(userId, userData);
             return userData;
         }, executor);
+    }
+
+    private void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
     }
 }
