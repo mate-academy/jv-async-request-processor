@@ -23,7 +23,7 @@ public class AsyncRequestProcessor {
                     try {
                         Thread.sleep(200L);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
 
                     UserData userData = new UserData(userId, "Details for " + userId);
