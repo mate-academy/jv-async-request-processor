@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
-    private static final int DB_ACCESS_DELAY = 500;
+    private static final Long DB_ACCESS_DELAY_MILLISECONDS = 500L;
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
@@ -19,16 +19,16 @@ public class AsyncRequestProcessor {
             return CompletableFuture.completedFuture(cache.get(userId));
         }
         return CompletableFuture.supplyAsync(() -> {
-            simulateDatabaseAccess();
+            sleep(DB_ACCESS_DELAY_MILLISECONDS);
             UserData userData = new UserData(userId, "Details for " + userId);
             cache.put(userId, userData);
             return userData;
         }, executor);
     }
 
-    private static void simulateDatabaseAccess() {
+    private static void sleep(Long timeInMs) {
         try {
-            Thread.sleep(DB_ACCESS_DELAY);
+            Thread.sleep(timeInMs);
         } catch (InterruptedException e) {
             throw new RuntimeException("Thread "
                     + Thread.currentThread().getName()
