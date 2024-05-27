@@ -15,7 +15,7 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         if (cash.containsKey(userId)) {
-            return CompletableFuture.supplyAsync(() -> cash.get(userId));
+            return CompletableFuture.completedFuture(cash.get(userId));
         }
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -24,6 +24,9 @@ public class AsyncRequestProcessor {
                 Thread.currentThread().interrupt();
             }
             return new UserData(userId, "Details for " + userId);
-        }, executor);
+        }, executor).thenApply(userData -> {
+            cash.put(userId, userData);
+            return userData;
+        });
     }
 }
