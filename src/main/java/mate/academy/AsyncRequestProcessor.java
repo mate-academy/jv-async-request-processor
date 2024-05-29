@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
+    public static final int WAIT_TIME_MILLISECONDS = 1000;
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
@@ -23,13 +24,17 @@ public class AsyncRequestProcessor {
             return userData;
         }
 
+        wait(WAIT_TIME_MILLISECONDS);
+        userData = new UserData(userId, "Details for " + userId);
+        cache.put(userId, userData);
+        return userData;
+    }
+
+    private void wait(int waitTime) {
         try {
-            Thread.sleep(1000);
-            userData = new UserData(userId, "Details for " + userId);
-            cache.put(userId, userData);
-            return userData;
+            Thread.sleep(waitTime);
         } catch (InterruptedException e) {
-            throw new RuntimeException("Something went wrong!");
+            throw new RuntimeException("Unexpected interrupted!", e);
         }
     }
 }
