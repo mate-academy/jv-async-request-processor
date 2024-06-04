@@ -2,11 +2,12 @@ package mate.academy;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = null; // Provide implementation that fits your needs
+        ExecutorService executor = Executors.newCachedThreadPool();
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
@@ -14,8 +15,7 @@ public class Main {
         CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
 
         for (int i = 0; i < userIds.length; i++) {
-            String userId = userIds[i];
-            futures[i] = asyncRequestProcessor.processRequest(userId)
+            futures[i] = asyncRequestProcessor.processRequest(userIds[i])
                     .thenAccept(userData -> System.out.println("Processed: " + userData));
         }
 
