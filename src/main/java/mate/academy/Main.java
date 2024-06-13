@@ -8,7 +8,6 @@ public class Main {
     public static void main(String[] args) {
         ExecutorService executor = ForkJoinPool.commonPool();
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
-
         String[] userIds = {"user1", "user2", "user3", "user1"};
         CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
 
