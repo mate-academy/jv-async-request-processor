@@ -2,14 +2,14 @@ package mate.academy;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 
 public class Main {
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(11);
+        ExecutorService executor = ForkJoinPool.commonPool();
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
-        String[] userIds = {"user1", "user2", "user3", "user1"}; // Note: "user1" is repeated
+        String[] userIds = {"user1", "user2", "user3", "user1"};
         CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
 
         for (int i = 0; i < userIds.length; i++) {
