@@ -2,10 +2,13 @@ package mate.academy;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
+    private static final int NUMBER_OF_THREADS = 5;
+
     public static void main(String[] args) {
-        ExecutorService executor = null;
+        ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         String[] userIds = {"user1", "user2", "user3", "user1"};

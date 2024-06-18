@@ -7,6 +7,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
+    private final static int SLEEP_TIME = 200;
+
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
@@ -21,7 +23,7 @@ public class AsyncRequestProcessor {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                TimeUnit.MILLISECONDS.sleep(200);
+                TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 throw new IllegalStateException(e);
             }
