@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
-    private final static int SLEEP_TIME = 200;
+    private static final int SLEEP_TIME = 200;
 
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
