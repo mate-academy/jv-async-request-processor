@@ -26,6 +26,7 @@ public class AsyncRequestProcessor {
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
         return new UserData(userId, "Data for user %s".formatted(userId));
