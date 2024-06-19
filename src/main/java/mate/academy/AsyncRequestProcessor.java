@@ -14,18 +14,15 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (cache.containsKey(userId)) {
-            return CompletableFuture.supplyAsync(() -> cache.get(userId), executor);
+        UserData cachedData = cache.get(userId);
+        if (cachedData != null) {
+            return CompletableFuture.completedFuture(cachedData);
         }
         return CompletableFuture
                 .supplyAsync(() -> new UserData(userId, "Details for " + userId), executor)
                 .thenApply(userData -> {
-                    setCache(userId, userData);
+                    cache.putIfAbsent(userId, userData);
                     return userData;
                 });
-    }
-
-    private void setCache(String id, UserData userData) {
-        cache.put(id, userData);
     }
 }
