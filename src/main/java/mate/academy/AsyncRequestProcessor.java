@@ -17,20 +17,17 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (cache.containsKey(userId)) {
-            return CompletableFuture.completedFuture(cache.get(userId));
+        return CompletableFuture.supplyAsync(() ->
+                         cache.computeIfAbsent(userId, this::getUserData),
+               executor);
+    }
+
+    private UserData getUserData(String userId) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
         }
-
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                TimeUnit.MILLISECONDS.sleep(SLEEP_TIME);
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
-            }
-
-            UserData userData = new UserData(userId, "Details for " + userId);
-            cache.put(userId, userData);
-            return userData;
-        }, executor);
+        return new UserData(userId, "Details for " + userId);
     }
 }
