@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
@@ -20,16 +21,16 @@ public class AsyncRequestProcessor {
 
     private UserData fillAndReturnUserData(String userId) {
         try {
-            Thread.sleep(200);
+            TimeUnit.MILLISECONDS.sleep(200);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
 
-        if (cache.containsKey(userId)) {
-            return cache.get(userId);
-        }
-        UserData userData = new UserData(userId, "Details for " + userId);
-        cache.put(userId, userData);
-        return userData;
+        return cache.computeIfAbsent(userId, key -> {
+            StringBuilder detailsBuilder = new StringBuilder();
+            detailsBuilder.append("Details for ").append(key);
+            return new UserData(key, detailsBuilder.toString());
+        });
     }
 }
