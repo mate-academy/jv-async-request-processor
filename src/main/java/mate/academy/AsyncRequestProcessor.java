@@ -42,6 +42,7 @@ public class AsyncRequestProcessor {
     }
 
     private UserData emulateDataBaseAccess(String userId) throws InterruptedException {
+        Thread.sleep(1000);
         return new UserData(userId, "Some %s user data".formatted(userId));
     }
 }
