@@ -8,7 +8,7 @@ import mate.academy.exception.NoUserInCacheException;
 import mate.academy.exception.RequestProcessingException;
 
 public class AsyncRequestProcessor {
-    private static Map<String, UserData> cache = new ConcurrentHashMap<>();
+    private final Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Executor executor;
 
     public AsyncRequestProcessor(Executor executor) {
@@ -20,7 +20,7 @@ public class AsyncRequestProcessor {
                 () -> findUserInCache(userId), executor).exceptionally(ex -> {
                     try {
                         UserData userData = emulateDataBaseAccess(userId);
-                        CompletableFuture.runAsync(() -> cacheFetchedData(userId, userData));
+                        cacheFetchedData(userId, userData);
                         return userData;
                     } catch (InterruptedException e) {
                         throw new RequestProcessingException("Failed to process "
@@ -42,7 +42,6 @@ public class AsyncRequestProcessor {
     }
 
     private UserData emulateDataBaseAccess(String userId) throws InterruptedException {
-        Thread.sleep(1000);
         return new UserData(userId, "Some %s user data".formatted(userId));
     }
 }
