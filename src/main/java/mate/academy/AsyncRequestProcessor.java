@@ -20,14 +20,14 @@ public class AsyncRequestProcessor {
         }
 
         return CompletableFuture.supplyAsync(() -> {
-            wait(WAIT_MILLISECONDS);
+            sleep(WAIT_MILLISECONDS);
             UserData userData = new UserData(userId, "Details for " + userId);
             cache.put(userId, userData);
             return userData;
         }, executor);
     }
 
-    private void wait(int milliseconds) {
+    private void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
