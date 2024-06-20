@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import mate.academy.exception.NoUserInCacheException;
+import mate.academy.exception.RequestProcessingException;
 
 public class AsyncRequestProcessor {
     private static Map<String, UserData> cache = new ConcurrentHashMap<>();
