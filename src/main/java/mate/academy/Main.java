@@ -2,11 +2,12 @@ package mate.academy;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
-        // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = null; // Provide implementation that fits your needs
+        // Initialize the executor with a fixed thread pool
+        ExecutorService executor = Executors.newFixedThreadPool(4); // 4 threads in the pool
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
@@ -21,6 +22,8 @@ public class Main {
 
         // Wait for all futures to complete
         CompletableFuture.allOf(futures).join();
+
+        // Shutdown the executor
         executor.shutdown();
     }
 }
