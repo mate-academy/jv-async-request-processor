@@ -14,12 +14,11 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (cache.containsKey(userId)) {
-            return CompletableFuture.supplyAsync(() -> cache.get(userId), executor);
-        }
-        UserData userData = new UserData(userId, "Details for user" + userId);
-        cache.put(userId, userData);
         return CompletableFuture.supplyAsync(()
-                -> userData, executor);
+                -> cache.computeIfAbsent(userId, this::getDetailsForUser), executor);
+    }
+
+    private UserData getDetailsForUser(String userId) {
+        return new UserData(userId, "Details for user " + userId);
     }
 }
