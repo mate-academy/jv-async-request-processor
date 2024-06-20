@@ -1,14 +1,14 @@
 package mate.academy;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
     private static final String USER_DETAILS = "Details for ";
-    private static final Random random = new Random();
 
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
@@ -23,7 +23,8 @@ public class AsyncRequestProcessor {
 
     private UserData getUserData(String userId) {
         try {
-            Thread.sleep(random.nextInt(1000));
+            long timeout = ThreadLocalRandom.current().nextLong(1000);
+            TimeUnit.MILLISECONDS.sleep(timeout);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
