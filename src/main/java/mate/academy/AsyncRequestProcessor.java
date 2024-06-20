@@ -18,7 +18,7 @@ public class AsyncRequestProcessor {
                 () -> findUserInCache(userId), executor).exceptionally(ex -> {
                     try {
                         UserData userData = emulateDataBaseAccess(userId);
-                        cacheFetchedData(userId, userData);
+                        CompletableFuture.runAsync(() -> cacheFetchedData(userId, userData));
                         return userData;
                     } catch (InterruptedException e) {
                         throw new RequestProcessingException("Failed to process "
