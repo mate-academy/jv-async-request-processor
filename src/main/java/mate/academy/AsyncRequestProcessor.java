@@ -20,7 +20,7 @@ public class AsyncRequestProcessor {
         }
         return CompletableFuture.supplyAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
