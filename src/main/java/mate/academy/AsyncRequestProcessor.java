@@ -15,7 +15,15 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         return CompletableFuture.supplyAsync(() ->
-                cache.computeIfAbsent(userId, details
-                        -> new UserData(userId, "Details for " + details)), executor);
+                cache.computeIfAbsent(userId, this::getDataForUser), executor);
+    }
+
+    private UserData getDataForUser(String userId) {
+        try {
+            Thread.sleep(505);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new UserData(userId, "Details for " + userId);
     }
 }
