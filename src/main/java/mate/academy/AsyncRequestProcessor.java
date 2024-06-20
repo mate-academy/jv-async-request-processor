@@ -14,15 +14,8 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        UserData cachedData = cache.get(userId);
-        if (cachedData != null) {
-            return CompletableFuture.completedFuture(cachedData);
-        }
-        return CompletableFuture
-                .supplyAsync(() -> new UserData(userId, "Details for " + userId), executor)
-                .thenApply(userData -> {
-                    cache.putIfAbsent(userId, userData);
-                    return userData;
-                });
+        return CompletableFuture.supplyAsync(() ->
+                cache.computeIfAbsent(userId, details
+                        -> new UserData(userId, "Details for " + details)), executor);
     }
 }
