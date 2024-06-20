@@ -1,10 +1,11 @@
 package mate.academy;
 
-import lombok.SneakyThrows;
-
 import java.util.Map;
-import java.util.concurrent.*;
-import java.util.function.Supplier;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
