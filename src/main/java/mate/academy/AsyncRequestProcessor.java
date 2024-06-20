@@ -11,7 +11,7 @@ public class AsyncRequestProcessor {
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
-        cache = new ConcurrentHashMap<>();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
@@ -20,16 +20,21 @@ public class AsyncRequestProcessor {
         }
 
         return CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
+            sleep();
 
             UserData userData = new UserData(userId, "user " + userId);
             cache.put(userId, userData);
+
             return userData;
         }, executor);
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
     }
 }
