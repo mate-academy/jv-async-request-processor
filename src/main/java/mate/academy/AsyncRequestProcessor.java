@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
-    private static final String USER_DETAILS = "Details for ";
+    private static final String USER_DETAILS = "Details for %s";
 
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
@@ -28,12 +28,6 @@ public class AsyncRequestProcessor {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-        UserData cachedUserData = cache.get(userId);
-        if (cachedUserData != null) {
-            return cachedUserData;
-        }
-        UserData userData = new UserData(userId, USER_DETAILS + userId);
-        cache.put(userId, userData);
-        return userData;
+        return cache.computeIfAbsent(userId, s -> new UserData(s, USER_DETAILS.formatted(s)));
     }
 }
