@@ -5,9 +5,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
+    private static final int THREADS_NUMBER = 4;
+
     public static void main(String[] args) {
+
         // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = Executors.newFixedThreadPool(4);
+        ExecutorService executor = Executors.newFixedThreadPool(THREADS_NUMBER);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests

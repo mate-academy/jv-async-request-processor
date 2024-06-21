@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
+    private static final int SLEEP_MILLIS = 1000;
+
     private final Executor executor;
     private Map<String, UserData> cache;
 
@@ -15,26 +17,18 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (cache.containsKey(userId)) {
-            return CompletableFuture.completedFuture(cache.get(userId));
-        }
-
-        return CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> cache.computeIfAbsent(userId, id -> {
             sleep();
-
-            UserData userData = new UserData(userId, "user " + userId);
-            cache.put(userId, userData);
-
-            return userData;
-        }, executor);
+            return new UserData(userId, "Details for " + id);
+        }), executor);
     }
 
     private void sleep() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(SLEEP_MILLIS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to execute sleep. Thread was interrupted.", e);
         }
     }
 }
