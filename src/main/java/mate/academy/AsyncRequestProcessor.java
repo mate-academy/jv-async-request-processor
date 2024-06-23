@@ -4,10 +4,10 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import mate.academy.exception.NoUserInCacheException;
 import mate.academy.exception.RequestProcessingException;
 
 public class AsyncRequestProcessor {
+    private static final int TASK_EMULATION_DELAY = 1000;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Executor executor;
 
@@ -16,33 +16,16 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(
-                () -> findUserInCache(userId), executor).exceptionally(ex -> {
-                    try {
-                        UserData userData = emulateDataBaseAccess(userId);
-                        cacheFetchedData(userId, userData);
-                        return userData;
-                    } catch (InterruptedException e) {
-                        throw new RequestProcessingException("Failed to process "
-                                + "the request for userId=" + userId, e);
-                    }
-                });
+        return CompletableFuture.supplyAsync(() ->
+                cache.computeIfAbsent(userId, this::emulateDataBaseAccess), executor);
     }
 
-    private UserData findUserInCache(String userId) {
-        if (cache.containsKey(userId)) {
-            return cache.get(userId);
-        } else {
-            throw new NoUserInCacheException();
+    private UserData emulateDataBaseAccess(String userId) {
+        try {
+            Thread.sleep(TASK_EMULATION_DELAY);
+            return new UserData(userId, "Some %s user data".formatted(userId));
+        } catch (InterruptedException e) {
+            throw new RequestProcessingException("Failed to emulate user data", e);
         }
-    }
-
-    private void cacheFetchedData(String userId, UserData userData) {
-        cache.put(userId, userData);
-    }
-
-    private UserData emulateDataBaseAccess(String userId) throws InterruptedException {
-        Thread.sleep(1000);
-        return new UserData(userId, "Some %s user data".formatted(userId));
     }
 }
