@@ -14,10 +14,11 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        var data = new UserData(userId, "Details for " + userId);
-        return CompletableFuture.supplyAsync(() -> {
-            cache.computeIfAbsent(userId, userDetails -> data);
-            return data;
-        }, executor);
+        return CompletableFuture.supplyAsync(() -> cache
+                .computeIfAbsent(userId, this::getUserDataById), executor);
+    }
+
+    private UserData getUserDataById(String id) {
+        return new UserData(id, "Details for " + id);
     }
 }
