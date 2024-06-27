@@ -19,6 +19,11 @@ public class AsyncRequestProcessor {
     }
 
     private UserData getUserDataById(String id) {
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return new UserData(id, "Details for " + id);
     }
 }
