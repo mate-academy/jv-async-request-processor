@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
     private static final String USER_DETAILS = "Details for %s";
+    private static final long TIMEOUT = 1000L;
 
     private final Executor executor;
     private final Map<String, UserData> cache = new ConcurrentHashMap<>();
@@ -22,12 +23,20 @@ public class AsyncRequestProcessor {
     }
 
     private UserData getUserData(String userId) {
+        return cache.computeIfAbsent(userId, s -> {
+            requestProcessingSimulation(userId);
+            return new UserData(userId, USER_DETAILS.formatted(userId));
+        });
+    }
+
+    private static void requestProcessingSimulation(String userId) {
         try {
-            long timeout = ThreadLocalRandom.current().nextLong(1000);
+            long timeout = ThreadLocalRandom.current().nextLong(TIMEOUT);
             TimeUnit.MILLISECONDS.sleep(timeout);
         } catch (InterruptedException ex) {
+            System.out.printf("Thread %s is interrupted for user %s%n",
+                    Thread.currentThread().getName(), userId);
             Thread.currentThread().interrupt();
         }
-        return cache.computeIfAbsent(userId, s -> new UserData(s, USER_DETAILS.formatted(s)));
     }
 }
