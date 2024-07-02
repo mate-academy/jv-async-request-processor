@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 
 public class Main {
     private static final int THREADS_COUNT = 4;
+
     public static void main(String[] args) {
         ExecutorService executor = Executors.newFixedThreadPool(THREADS_COUNT);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
