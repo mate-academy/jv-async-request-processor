@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
@@ -14,19 +15,13 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (cache.containsKey(userId)) {
-            return CompletableFuture.completedFuture(cache.get(userId));
-        }
-
-        return CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> cache.computeIfAbsent(userId, id -> {
             try {
-                Thread.sleep(1000);
+                TimeUnit.SECONDS.sleep(1); // Simulate delay
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            UserData userData = new UserData(userId, "Details for " + userId);
-            cache.put(userId, userData);
-            return userData;
-        }, executor);
+            return new UserData(id, "Details for " + id);
+        }), executor);
     }
 }
