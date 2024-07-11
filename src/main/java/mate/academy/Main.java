@@ -6,11 +6,10 @@ import java.util.concurrent.Executors;
 
 public class Main {
     public static void main(String[] args) {
-        ExecutorService executor =
-                Executors.newFixedThreadPool(8); // Provide implementation that fits your needs
+        ExecutorService executor = Executors.newFixedThreadPool(8);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
-        String[] userIds = {"user1", "user2", "user3", "user1"}; // Note: "user1" is repeated
+        String[] userIds = {"user1", "user2", "user3", "user1"};
         CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
         for (int i = 0; i < userIds.length; i++) {
             String userId = userIds[i];
