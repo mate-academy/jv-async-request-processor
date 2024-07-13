@@ -18,27 +18,36 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        UserData userData = cache.get(userId);
-        if (userData != null) {
-            return CompletableFuture.completedFuture(userData);
+        UserData cachedUserData = cache.get(userId);
+        if (cachedUserData != null) {
+            return CompletableFuture.completedFuture(cachedUserData);
         }
 
-        return CompletableFuture.supplyAsync(() -> getUserData(userId), executor);
+        return CompletableFuture.supplyAsync(() -> {
+            UserData userData = getUserData(userId);
+            cache.put(userId, userData);
+            return userData;
+        }, executor);
     }
 
     private UserData getUserData(String userId) {
         try {
             Thread.sleep(700);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Oops, something went wrong", e);
         }
 
-        if (cache.containsKey(userId)) {
-            return cache.get(userId);
-        }
+        return new UserData(userId, "Details for " + userId);
+    }
 
-        UserData userData = new UserData(userId, "Details for " + userId);
-        cache.put(userId, userData);
-        return userData;
+    public static void main(String[] args) {
+        Executor executor = Runnable::run;
+        AsyncRequestProcessor processor = new AsyncRequestProcessor(executor);
+        String[] userIds = {"user1", "user2", "user3", "user1"};
+        for (String userId : userIds) {
+            processor.processRequest(userId).thenAccept(userData ->
+                    System.out.println("Processed: " + userData)
+            );
+        }
     }
 }
