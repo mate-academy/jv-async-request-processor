@@ -16,20 +16,19 @@ public class AsyncRequestProcessor {
     public CompletableFuture<UserData> processRequest(String userId) {
         if (map.containsKey(userId)) {
             return getUser(userId,executor);
-
         }
+
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         map.put(userId,new UserData(userId,"some details"));
         return getUser(userId,executor);
     }
 
     private CompletableFuture<UserData> getUser(String userId, Executor executor) {
-        return CompletableFuture.supplyAsync(() ->
-                new UserData(userId,
-                        "Some details about " + userId),executor);
+        return CompletableFuture.supplyAsync(() -> map.get(userId),executor);
     }
 }
