@@ -18,7 +18,7 @@ public class AsyncRequestProcessor {
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException("This thread was interrupted.");
         }
         return CompletableFuture.supplyAsync(() -> getUserFromMap(userId), executor);
     }
