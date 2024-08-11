@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
-    Map<String, UserData> cache = new ConcurrentHashMap<>();
+    private Map<String, UserData> cache = new ConcurrentHashMap<>();
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
