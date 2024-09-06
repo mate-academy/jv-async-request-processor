@@ -1,7 +1,8 @@
 # Asynchronous user request processing and caching
 
 ### Objective
-Develop a Java application that processes user requests asynchronously using `CompletableFuture` and caches the results in a `Map` interface instance for quick retrieval in future requests.
+Develop a Java application that processes user requests asynchronously using `CompletableFuture` 
+and caches the results in a `Map` interface instance for quick retrieval in future requests.
 
 ### Requirements
 
@@ -15,17 +16,18 @@ Develop a Java application that processes user requests asynchronously using `Co
     - The `processRequest` method should return a `CompletableFuture<UserData>`.
 
 3. **Caching with ConcurrentHashMap**:
-    - Declare a `Map<String, UserData> cache = new ConcurrentHashMap<>();` to cache the results of processed requests. NOTE: `ConcurrentHashMap` is a thread-safe implementation of the `Map` interface. We will cover it in details in next topics.
+    - Declare a `Map<String, UserData> cache = new ConcurrentHashMap<>();` to cache the results of processed requests. 
+      NOTE: `ConcurrentHashMap` is a thread-safe implementation of the `Map` interface.
     - Before processing a request, check if the `userId` is already in the cache. If yes, return the cached result immediately.
     - After processing a request, store the result in the cache.
 
 ### Expected output
-The application should be able to process multiple user requests concurrently, returning results asynchronously. Repeated requests for the same `userId` should be served from the cache, significantly reducing the response time.
+The application should be able to process multiple user requests concurrently, returning results asynchronously. 
+Repeated requests for the same `userId` should be served from the cache, significantly reducing the response time.
 
 Input data: 
 
 `String[] userIds = {"user1", "user2", "user3", "user1"}; // Note: "user1" is repeated`
-
 
 Console output: 
 ```text
