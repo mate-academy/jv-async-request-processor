@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
+    private static final String DETAILS_MESSAGE = "Details for %s";
     private final Map<String, UserData> cashData = new ConcurrentHashMap<>();
     private final Executor executor;
 
@@ -21,12 +22,13 @@ public class AsyncRequestProcessor {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Task was interrupted", e);
             }
-            return new UserData(userId, "Details for " + userId);
+            return new UserData(userId, DETAILS_MESSAGE + userId);
         }, executor).thenApply(userData -> {
             cashData.put(userId, userData);
-            return userData; // Return the UserData object
+            return userData;
         });
     }
 }
