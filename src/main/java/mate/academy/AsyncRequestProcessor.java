@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
+    private final Map<String, UserData> cashData = new ConcurrentHashMap<>();
     private final Executor executor;
-    public Map<String, UserData> cashData = new ConcurrentHashMap<>();
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
