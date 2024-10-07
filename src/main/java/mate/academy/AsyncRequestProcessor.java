@@ -15,22 +15,22 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        // Use computeIfAbsent to initiate the data-fetching CompletableFuture only if absent
-        return cache.computeIfAbsent(userId, id -> fetchUserDataAsync(id));
+        CompletableFuture<UserData> userDataFuture = fetchUserDataAsync(userId);
+        return cache.computeIfAbsent(userId, id -> userDataFuture);
     }
 
-    // Asynchronous method to simulate fetching data with delay
     private CompletableFuture<UserData> fetchUserDataAsync(String userId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                // Simulate a delay for fetching user data
-                TimeUnit.SECONDS.sleep(1); // Simulate delay without blocking the cache
-            } catch (InterruptedException e) {
-                // Reset interrupt flag and throw RuntimeException to indicate cancellation
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("Operation was interrupted for userId: " + userId, e);
-            }
-            return new UserData(userId, "Details for " + userId);
-        }, executor);
+        Executor delayedExecutor = CompletableFuture.delayedExecutor(
+                1, TimeUnit.SECONDS, executor
+        );
+
+        return CompletableFuture.supplyAsync(
+                () -> new UserData(userId, "Details for " + userId), delayedExecutor
+        ).exceptionally(ex -> {
+            System.out.println(
+                    "Failed to process request for userId: " + userId + " - " + ex.getMessage()
+            );
+            return null;
+        });
     }
 }
