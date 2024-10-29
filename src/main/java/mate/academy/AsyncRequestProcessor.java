@@ -27,6 +27,6 @@ public class AsyncRequestProcessor {
                 userCache.put(userId, userData);
                 return userData;
             }
-        });
+        }, executor);
     }
 }
