@@ -19,14 +19,8 @@ public class Main {
         Map<String, UserData> cache = new ConcurrentHashMap<>();
         for (int i = 0; i < userIds.length; i++) {
             String userId = userIds[i];
-            if (cache.containsKey(userId)) {
-                System.out.println("Retrieved from cache: " + userId);
-                futures[i] = CompletableFuture.completedFuture(cache.get(userId))
+            futures[i] = asyncRequestProcessor.processRequest(userId)
                         .thenAccept(userData -> System.out.println("Processed: " + userData));
-            } else {
-                futures[i] = asyncRequestProcessor.processRequest(userId)
-                        .thenAccept(userData -> System.out.println("Processed: " + userData));
-            }
         }
 
         // Wait for all futures to complete
