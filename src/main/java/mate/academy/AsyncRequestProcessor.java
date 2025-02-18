@@ -33,7 +33,8 @@ public class AsyncRequestProcessor {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            UserData userData = new UserData(userId, databaseMock.getOrDefault(userId, "Unknown user"));
+            UserData userData = new UserData(userId,
+                    databaseMock.getOrDefault(userId, "Unknown user"));
             cache.put(userId, userData);
             return userData;
         }, executor);
