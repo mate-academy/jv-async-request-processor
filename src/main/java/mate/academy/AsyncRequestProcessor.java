@@ -24,7 +24,7 @@ public class AsyncRequestProcessor {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException("Thread interrupted");
             }
-            UserData userData = new UserData(userId, "User name of" + userId);
+            UserData userData = new UserData(userId, "Details for " + userId);
             cache.put(userId, userData);
             return userData;
         }, executor);
