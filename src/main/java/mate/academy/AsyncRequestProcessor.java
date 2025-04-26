@@ -14,13 +14,7 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        if (map.get(userId) != null) {
-            return CompletableFuture.supplyAsync(() -> map.get(userId));
-        }
-        UserData userData = new UserData(userId, "Processed");
-        CompletableFuture<UserData> completableFuture = CompletableFuture.supplyAsync(() ->
-                userData);
-        map.put(userId, userData);
-        return completableFuture;
+        return CompletableFuture.supplyAsync(() ->
+                map.computeIfAbsent(userId, id -> new UserData(id, "Details for " + id)), executor);
     }
 }
