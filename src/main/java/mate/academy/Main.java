@@ -2,11 +2,13 @@ package mate.academy;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // Feel free to play with AsyncRequestProcessor in this main method if you want
-        ExecutorService executor = null; // Provide implementation that fits your needs
+        ExecutorService executor = Executors.newFixedThreadPool(3);
         AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
         // Simulating multiple concurrent requests
@@ -22,5 +24,6 @@ public class Main {
         // Wait for all futures to complete
         CompletableFuture.allOf(futures).join();
         executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
     }
 }
