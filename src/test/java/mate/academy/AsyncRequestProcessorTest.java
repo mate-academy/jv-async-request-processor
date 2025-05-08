@@ -21,7 +21,6 @@ public class AsyncRequestProcessorTest {
         // when
         CompletableFuture<UserData> resultFuture = processor.processRequest(userId);
         UserData result = resultFuture.join();
-
         // then
         assertNotNull(result);
         assertEquals(userId, result.userId());
@@ -39,7 +38,6 @@ public class AsyncRequestProcessorTest {
         // then
         assertFalse(resultFuture.isDone()); // Check that the future is not completed immediately
         UserData result = resultFuture.get(2, TimeUnit.SECONDS);
-
         assertNotNull(result);
         assertEquals(userId, result.userId());
     }
