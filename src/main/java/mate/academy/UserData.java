@@ -1,5 +1,7 @@
 package mate.academy;
 
-public record UserData(String userId, String details) {
-
+public record UserData(
+        String userId,
+        String details
+) {
 }
