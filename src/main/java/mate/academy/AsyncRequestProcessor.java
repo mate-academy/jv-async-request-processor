@@ -15,12 +15,14 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("This thread was interrupted.");
-        }
-        return CompletableFuture.supplyAsync(() -> getUserFromMap(userId), executor);
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("This thread was interrupted.", e);
+            }
+            return getUserFromMap(userId);
+        }, executor);
     }
 
     private UserData getUserFromMap(String key) {
