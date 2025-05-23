@@ -6,16 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
-    private final Map<String, UserData> cache;
+    private final Map<String, UserData> cache = new ConcurrentHashMap<>();
     private final Executor executor;
 
     public AsyncRequestProcessor(Executor executor) {
-        this(executor, new ConcurrentHashMap<>());
-    }
-
-    private AsyncRequestProcessor(Executor executor, Map<String, UserData> cache) {
         this.executor = executor;
-        this.cache = cache;
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
