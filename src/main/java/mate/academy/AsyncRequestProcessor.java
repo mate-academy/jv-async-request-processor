@@ -24,8 +24,7 @@ public class AsyncRequestProcessor {
                     return data;
                 });
         } else {
-            return CompletableFuture.completedFuture(
-                new UserData(userId, "Details of user: " + userId));
+            return CompletableFuture.completedFuture(userData);
         }
     }
 
