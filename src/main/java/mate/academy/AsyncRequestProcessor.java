@@ -17,11 +17,10 @@ public class AsyncRequestProcessor {
         return CompletableFuture.supplyAsync(() -> {
             if (cache.containsKey(userId)) {
                 return cache.get(userId);
-            } else {
-                UserData userData = new UserData(userId, "Details for " + userId);
-                cache.put(userId, userData);
-                return userData;
             }
+            UserData userData = new UserData(userId, String.format("Details for %s", userId));
+            cache.put(userId, userData);
+            return userData;
         }, executor);
     }
 }
