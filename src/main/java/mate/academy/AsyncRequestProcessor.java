@@ -28,7 +28,7 @@ public class AsyncRequestProcessor {
 
     private void delay() {
         try {
-            Thread.sleep(2000L);
+            Thread.sleep(100L);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
