@@ -17,7 +17,15 @@ public class AsyncRequestProcessor {
 
     public CompletableFuture<UserData> processRequest(String userId) {
         return CompletableFuture.supplyAsync(
-                () -> cacheMap.computeIfAbsent(userId, from()), executor);
+                () -> {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return cacheMap.computeIfAbsent(userId, from());
+                }, executor)
+                .exceptionally(throwable -> from().apply("Default user"));
     }
 
     private Function<String, UserData> from() {
