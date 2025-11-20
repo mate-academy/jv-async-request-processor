@@ -16,24 +16,17 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        // The processing can be a simulated task,
-        // like fetching user data from a database (mock this with a delay).
-
-        // According to the requirements,even fetching might be delayed.
-        // Actually, as in real applications!
         return CompletableFuture.supplyAsync(
-                () -> {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return cacheMap.computeIfAbsent(userId, from());
-                }, executor)
-                .exceptionally(throwable -> from().apply("Default user"));
+                () -> cacheMap.computeIfAbsent(userId, from()), executor);
     }
 
     private Function<String, UserData> from() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
         return userId -> new UserData(userId, "Details for " + userId);
     }
 }
