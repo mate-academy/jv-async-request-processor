@@ -16,6 +16,11 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
+        // The processing can be a simulated task,
+        // like fetching user data from a database (mock this with a delay).
+
+        // According to the requirements,even fetching might be delayed.
+        // Actually, as in real applications!
         return CompletableFuture.supplyAsync(
                 () -> {
                     try {
