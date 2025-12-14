@@ -16,7 +16,6 @@ public class AsyncRequestProcessor {
     public CompletableFuture<UserData> processRequest(String userId) {
         UserData cachedData = cache.get(userId);
         if (cachedData != null) {
-            System.out.println("Returning from cache: " + userId);
             return CompletableFuture.completedFuture(cachedData);
         }
 
@@ -31,7 +30,6 @@ public class AsyncRequestProcessor {
             UserData userData = new UserData(userId, "Details for " + userId);
 
             cache.put(userId, userData);
-            System.out.println("Processed and cached: " + userId);
 
             return userData;
         }, executor);
