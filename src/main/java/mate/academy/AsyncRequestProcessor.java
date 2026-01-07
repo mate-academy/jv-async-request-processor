@@ -15,14 +15,13 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
+        if (cache.containsKey(userId)) {
+            return CompletableFuture.completedFuture(cache.get(userId));
+        }
         return CompletableFuture.supplyAsync(() -> getUserDataFromDB(userId), executor);
     }
 
     private UserData getUserDataFromDB(String userId) {
-        if (cache.containsKey(userId)) {
-            return cache.get(userId);
-        }
-
         try {
             System.out.println("Retrieving data from db");
             Thread.sleep(new Random().nextInt(1000));
