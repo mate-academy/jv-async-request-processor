@@ -19,7 +19,7 @@ public class AsyncRequestProcessor {
     public CompletableFuture<UserData> processRequest(String userId) {
         UserData userData = cache.get(userId);
         if (userData != null) {
-            CompletableFuture.completedFuture(userData);
+            return CompletableFuture.completedFuture(userData);
         }
 
         return CompletableFuture.supplyAsync(()
