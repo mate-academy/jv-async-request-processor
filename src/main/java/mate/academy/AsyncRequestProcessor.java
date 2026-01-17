@@ -17,9 +17,12 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(() -> cache.computeIfAbsent(
-              userId,
-              value -> dao.get(userId)
-        ), executor);
+        UserData userData = cache.get(userId);
+        if (userData != null) {
+            CompletableFuture.completedFuture(userData);
+        }
+
+        return CompletableFuture.supplyAsync(()
+                -> cache.computeIfAbsent(userId, dao::get), executor);
     }
 }
