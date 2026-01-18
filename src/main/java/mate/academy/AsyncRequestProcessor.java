@@ -19,18 +19,15 @@ public class AsyncRequestProcessor {
         }
 
         return CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
-
-            UserData userData = new UserData(userId, "Details for " + userId);
-
-            cache.put(userId, userData);
-
-            return userData;
+            return cache.computeIfAbsent(userId, key -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Thread interrupted", e);
+                }
+                return new UserData(key, "Details for " + key);
+            });
         }, executor);
     }
 }
