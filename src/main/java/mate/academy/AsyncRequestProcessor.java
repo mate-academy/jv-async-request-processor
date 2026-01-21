@@ -13,6 +13,7 @@ public class AsyncRequestProcessor {
     public CompletableFuture<UserData> processRequest(String userId) {
         return CompletableFuture.supplyAsync(() -> compute(userId), executor);
     }
+
     private UserData compute(String userid) {
         try {
             Thread.sleep(100);
