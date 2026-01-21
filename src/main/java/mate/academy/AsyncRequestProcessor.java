@@ -11,6 +11,14 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return null;
+        return CompletableFuture.supplyAsync(() -> compute(userId), executor);
+    }
+    private UserData compute(String userid) {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new UserData(userid, "Details for " + userid);
     }
 }
