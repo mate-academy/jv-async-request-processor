@@ -17,12 +17,8 @@ public class AsyncRequestProcessor {
     public CompletableFuture<UserData> processRequest(String userId) {
         return CompletableFuture.supplyAsync(() -> userRepository.findUserById(userId), executor)
                 .thenApply(userData -> {
-                    addToCache(userData);
-                    return userData;
+                    UserData existing = cache.putIfAbsent(userData.userId(), userData);
+                    return existing != null ? existing : userData;
                 });
-    }
-
-    private void addToCache(UserData userData) {
-        cache.put(userData.userId(), userData);
     }
 }
