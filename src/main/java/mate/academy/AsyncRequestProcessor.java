@@ -4,8 +4,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import mate.academy.repository.UserRepository;
-import mate.academy.repository.UserRepositoryImpl;
 
 public class AsyncRequestProcessor {
     private final Executor executor;

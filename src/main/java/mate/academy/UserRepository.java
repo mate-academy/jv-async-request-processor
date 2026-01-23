@@ -1,6 +1,4 @@
-package mate.academy.repository;
-
-import mate.academy.UserData;
+package mate.academy;
 
 public interface UserRepository {
     UserData findUserById(String userId);
