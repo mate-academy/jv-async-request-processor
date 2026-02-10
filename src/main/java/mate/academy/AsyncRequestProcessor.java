@@ -8,7 +8,9 @@ import java.util.concurrent.Executor;
 public class AsyncRequestProcessor {
 
     private final Executor executor;
-    private final Map<String, CompletableFuture<UserData>> cache =
+
+    private final Map<String, UserData> cache = new ConcurrentHashMap<>();
+    private final Map<String, CompletableFuture<UserData>> inFlight =
             new ConcurrentHashMap<>();
 
     public AsyncRequestProcessor(Executor executor) {
@@ -16,11 +18,21 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return cache.computeIfAbsent(userId, id ->
+        UserData cached = cache.get(userId);
+        if (cached != null) {
+            return CompletableFuture.completedFuture(cached);
+        }
+
+        return inFlight.computeIfAbsent(userId, id ->
                 CompletableFuture.supplyAsync(() -> {
                     simulateDelay();
                     return new UserData(id, "Details for " + id);
-                }, executor)
+                }, executor).whenComplete((result, error) -> {
+                    inFlight.remove(id);
+                    if (error == null) {
+                        cache.put(id, result);
+                    }
+                })
         );
     }
 
