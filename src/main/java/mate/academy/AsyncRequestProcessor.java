@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
-    private Map<String, UserData> cache;
+    private Map<String, CompletableFuture<UserData>> cache;
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
@@ -15,21 +15,17 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        UserData cached = cache.get(userId);
-        if (cached != null) {
-            return CompletableFuture.completedFuture(cached);
-        }
-
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                UserData userData = new UserData(userId, "Details for " + userId);
-                Thread.sleep(1000);
-                cache.putIfAbsent(userId, userData);
-                return userData;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("Request for " + userId + " was interrupted");
-            }
-        }, executor);
+        return cache.computeIfAbsent(userId, id ->
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        UserData userData = new UserData(userId, "Details for " + id);
+                        Thread.sleep(1000);
+                        return userData;
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException("Request for " + id + " was interrupted");
+                    }
+                },executor)
+        );
     }
 }
