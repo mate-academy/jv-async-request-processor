@@ -12,7 +12,7 @@ public class Main {
         String[] userIds = {"user1", "user2", "user3", "user1"};
         CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
 
-        long startTime = System.currentTimeMillis();
+        final long startTime = System.currentTimeMillis();
 
         for (int i = 0; i < userIds.length; i++) {
             String userId = userIds[i];
