@@ -7,21 +7,30 @@ import java.util.concurrent.Executor;
 
 public class AsyncRequestProcessor {
     private final Executor executor;
-    private final Map<String, CompletableFuture<UserData>> cache = new ConcurrentHashMap<>();
+    private final Map<String, UserData> cache = new ConcurrentHashMap<>();
 
     public AsyncRequestProcessor(Executor executor) {
         this.executor = executor;
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return cache.computeIfAbsent(userId, key -> CompletableFuture.supplyAsync(() -> {
+        UserData userData = cache.get(userId);
+
+        if (userData != null) {
+            return CompletableFuture.completedFuture(userData);
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException("Processing interrupted", e);
             }
-            return new UserData(key, "Details for " + key);
-        }, executor));
+            return new UserData(userId, "Details for " + userId);
+        }, executor).thenApply(result -> {
+            cache.put(userId, result);
+            return result;
+        });
     }
 }
