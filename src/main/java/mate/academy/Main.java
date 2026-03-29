@@ -7,23 +7,30 @@ import java.util.concurrent.Executors;
 public class Main {
     public static void main(String[] args) {
         ExecutorService executor = Executors.newCachedThreadPool();
-        AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
-        String[] userIds = {"user1", "user2", "user3", "user1"};
-        CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
+        try {
+            AsyncRequestProcessor asyncRequestProcessor = new AsyncRequestProcessor(executor);
 
-        final long startTime = System.currentTimeMillis();
+            String[] userIds = {"user1", "user2", "user3", "user1"};
+            CompletableFuture<?>[] futures = new CompletableFuture[userIds.length];
 
-        for (int i = 0; i < userIds.length; i++) {
-            String userId = userIds[i];
-            futures[i] = asyncRequestProcessor.processRequest(userId)
-                    .thenAccept(userData -> System.out.println("Processed: " + userData));
+            final long startTime = System.nanoTime();
+
+            for (int i = 0; i < userIds.length; i++) {
+                String userId = userIds[i];
+                futures[i] = asyncRequestProcessor.processRequest(userId)
+                        .thenAccept(userData -> System.out.println("Processed: " + userData));
+            }
+
+            CompletableFuture.allOf(futures).join();
+
+            long endTime = System.nanoTime();
+
+            long durationMs = (endTime - startTime) / 1_000_000;
+            System.out.println("Total execution time: " + durationMs + "ms");
+
+        } finally {
+            executor.shutdown();
         }
-
-        CompletableFuture.allOf(futures).join();
-        executor.shutdown();
-
-        long endTime = System.currentTimeMillis();
-        System.out.println("Total execution time: " + (endTime - startTime) + "ms");
     }
 }
