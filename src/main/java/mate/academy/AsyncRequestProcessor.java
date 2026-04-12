@@ -14,17 +14,22 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(() ->
-                cache.computeIfAbsent(userId, id -> {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException(e);
-                    }
 
-                    System.out.println("Processing request for " + id);
-                    return new UserData(id, "User data for " + id);
-                }), executor);
+        if (cache.containsKey(userId)) {
+            return CompletableFuture.completedFuture(cache.get(userId));
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+
+            UserData userData = new UserData(userId, "Details for " + userId);
+            cache.put(userId, userData);
+            return userData;
+        }, executor);
     }
 }
