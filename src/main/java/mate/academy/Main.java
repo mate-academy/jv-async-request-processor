@@ -15,7 +15,11 @@ public class Main {
         for (int i = 0; i < userIds.length; i++) {
             String userId = userIds[i];
             futures[i] = asyncRequestProcessor.processRequest(userId)
-                    .thenAccept(userData -> System.out.println("Processed: " + userData));
+                    .thenAccept(userData -> System.out.println("Processed: " + userData))
+                    .exceptionally(ex -> {
+                        System.err.println("Error processing " + userId + ": " + ex.getMessage());
+                        return null;
+                    });
         }
 
         CompletableFuture.allOf(futures).join();
