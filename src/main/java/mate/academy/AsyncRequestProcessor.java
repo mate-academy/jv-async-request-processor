@@ -19,16 +19,28 @@ public class AsyncRequestProcessor {
             return CompletableFuture.completedFuture(cached);
         }
 
+        return fetchUserDataAsync(userId)
+                .thenApply(userData -> saveToCache(userId, userData));
+    }
+
+    private CompletableFuture<UserData> fetchUserDataAsync(String userId) {
         return CompletableFuture.supplyAsync(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            simulateDatabaseCall();
             return new UserData(userId, "Details for " + userId);
-        }, this.executor).thenApply(userData -> {
-            cache.put(userId, userData);
-            return userData;
-        });
+        }, this.executor);
+    }
+
+    private UserData saveToCache(String userId, UserData userData) {
+        cache.put(userId, userData);
+        return userData;
+    }
+
+    private void simulateDatabaseCall() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Data fetching interrupted", e);
+        }
     }
 }
