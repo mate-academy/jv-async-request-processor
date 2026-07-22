@@ -25,6 +25,6 @@ public class AsyncRequestProcessor {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return new UserData(userId, "DummyUserDetails for " + userId);
+        return new UserData(userId, "Details for " + userId);
     }
 }
