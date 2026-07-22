@@ -15,7 +15,8 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        return CompletableFuture.supplyAsync(() -> userCache.computeIfAbsent(userId, this::getFromDB), executor);
+        return CompletableFuture.supplyAsync(() ->
+                userCache.computeIfAbsent(userId, this::getFromDB), executor);
     }
 
     private UserData getFromDB(String userId) {
