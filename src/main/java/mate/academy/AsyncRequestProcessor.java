@@ -14,10 +14,10 @@ public class AsyncRequestProcessor {
     }
 
     public CompletableFuture<UserData> processRequest(String userId) {
-        UserData cachedUser = cache.get(userId);
+        UserData cachedUserData = cache.get(userId);
 
-        if (cachedUser != null) {
-            return CompletableFuture.completedFuture(cachedUser);
+        if (cachedUserData != null) {
+            return CompletableFuture.completedFuture(cachedUserData);
         }
 
         return CompletableFuture.supplyAsync(() -> {
@@ -25,7 +25,8 @@ public class AsyncRequestProcessor {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
+                throw new IllegalStateException(
+                        "Request processing was interrupted", e);
             }
 
             UserData userData = new UserData(
@@ -34,7 +35,6 @@ public class AsyncRequestProcessor {
             );
 
             cache.put(userId, userData);
-
             return userData;
         }, executor);
     }
