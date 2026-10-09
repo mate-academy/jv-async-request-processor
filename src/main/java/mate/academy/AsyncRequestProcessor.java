@@ -29,7 +29,7 @@ public class AsyncRequestProcessor {
 
     private UserData fetchUserData(String userId) {
         try {
-            Thread.sleep(1000); // імітація запиту до БД
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Processing interrupted for " + userId, e);
