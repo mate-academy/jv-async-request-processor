@@ -28,7 +28,7 @@ public class AsyncRequestProcessor {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
-            UserData userData = new UserData(userId, "Details for user "
+            UserData userData = new UserData(userId, "Details for "
                     + userId);
             cache.put(userId, userData);
             return userData;
